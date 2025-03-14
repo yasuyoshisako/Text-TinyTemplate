@@ -26,7 +26,7 @@ sub render {
 
   my ($self, $template, $data) = @_;
 
-  my $begin = $self->{tag_begin};
+  my $begin = $self->{tag_start};
   my $end   = $self->{tag_end};
   my $expr  = $self->{expression_mark};
 
