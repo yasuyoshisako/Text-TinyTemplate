@@ -4,9 +4,9 @@ use strict;
 use warnings;
 
 use Carp qw( croak );
-use Text::TinyTemplate::Util qw( escape_html );
+use Text::TinyTemplate::Util qw( escape_html wrap_text_in_chars wrap_text_in_words );
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub new {
 
@@ -57,7 +57,7 @@ Text::TinyTemplate - 小さくてシンプルなテンプレートエンジン
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 SYNOPSIS
 
