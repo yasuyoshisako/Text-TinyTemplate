@@ -25,8 +25,10 @@ my $tpl = <<'EOF';
 <% foreach my $x (@$list) { %><%= $x %> <% } %>
 EOF
 
+my $output = $tt->render($tpl, { list => [1, 2, 3] });
+(my $trimmed = $output) =~ s/\s+\z//;
 is(
-    $tt->render($tpl, { list => [1, 2, 3] }) =~ s/\s+\z//r,
+    $trimmed,
     '1 2 3',
     'foreach loop'
 );
