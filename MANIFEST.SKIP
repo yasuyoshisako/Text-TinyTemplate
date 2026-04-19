@@ -1,0 +1,25 @@
+# Version control
+\.git/
+\.gitignore
+
+# Build artifacts
+^Makefile$
+^Makefile.old$
+^blib/
+^pm_to_blib
+^_build/
+^Build$
+^Build.bat$
+
+# Editor backups
+~$
+\.swp$
+\.swo$
+\.bak$
+
+# Dist files
+^Text-TinyTemplate-.*\.tar\.gz$
+
+# Mac / Windows junk
+^\.DS_Store$
+^Thumbs\.db$

@@ -1,0 +1,13 @@
+lib/Text/TinyTemplate.pm
+lib/Text/TinyTemplate/Utils.pm
+
+README.md
+Makefile.PL
+META.json
+
+MANIFEST
+MANIFEST.SKIP
+
+t/00-load.t
+t/escape_html.t
+t/render-basic.t
