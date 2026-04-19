@@ -45,8 +45,9 @@ sub render {
   return do {
 
     my @vals = grep { /^\w+$/ } keys %$data;
-    my $args = 'my (' . join(',', map { "\$$_" } @vals) . ')'
-             . ' = @{ $data }{qw(' . join(' ', @vals) . ')};';
+    my $args = @vals ? 'my (' . join(',', map { "\$$_" } @vals) . ')'
+                       . ' = @{ $data }{qw(' . join(' ', @vals) . ')};'
+                     : '';
     
     $template =~ s/(\s*)\Q$start\E(\Q$expr\E)?\s*(.+?)\s*\Q$end\E(\s*)/
       $2 ? $1 . q('; $_0 .= ) . $3 . q(; $_0 .= ') . $4

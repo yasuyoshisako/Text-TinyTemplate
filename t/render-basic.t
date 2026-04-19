@@ -21,15 +21,9 @@ is(
 );
 
 # 3. 繰り返し
-my $tpl = <<'EOF';
-<% foreach my $x (@$list) { %><%= $x %> <% } %>
-EOF
-
-my $output = $tt->render($tpl, { list => [1, 2, 3] });
-(my $trimmed = $output) =~ s/\s+\z//;
 is(
-    $trimmed,
-    '1 2 3',
+    $tt->render('<% foreach my $x (@$list) { %><%= $x %> <% } %>', { list => [1, 2, 3] }),
+    '1 2 3 ',
     'foreach loop'
 );
 
