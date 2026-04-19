@@ -51,9 +51,8 @@ sub render {
     $template =~ s/(\s*)\Q$start\E(\Q$expr\E)?\s*(.+?)\s*\Q$end\E(\s*)/
       $2 ? $1 . q('; $_0 .= ) . $3 . q(; $_0 .= ') . $4
          : q('; ) . $3 . q( $_0 .= ') . $4 /ge;
-    $template = "#line 1 \"template\"\n" . $template;
 
-    my $code = "$args\n" . q(my $_0 = ') . $template . q('; $_0;);
+    my $code = "#line 1 \"template\"\n$args\n" . q(my $_0 = ') . $template . q('; $_0;);
     my $result = eval $code;
     if ($@) {
       my $err = $@;

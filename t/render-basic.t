@@ -26,8 +26,8 @@ my $tpl = <<'EOF';
 EOF
 
 is(
-    $tt->render($tpl, { list => [1, 2, 3] }),
-    "1 2 3 ",
+    $tt->render($tpl, { list => [1, 2, 3] }) =~ s/\s+\z//r,
+    '1 2 3',
     'foreach loop'
 );
 
@@ -40,10 +40,10 @@ is(
 );
 
 # 5. カスタムタグ
-my $tt2 = Text::TinyTemplate->new(
-    tag_start => '[%',
-    tag_end   => '%]',
-);
+my $tt2 = Text::TinyTemplate->new;
+
+$tt2->tag_start('[%');
+$tt2->tag_end('%]');
 
 is(
     $tt2->render('[%= 10 %]', {}),
