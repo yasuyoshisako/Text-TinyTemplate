@@ -49,8 +49,21 @@ sub render {
          : q('; ) . $3 . q( $_0 .= ') . $4 /ge;
 
     my $code = "#line 1 \"template\"\nuse strict;\nuse warnings;\n$args\n" . q(my $_0 = ') . $template . q('; $_0;);
+    # my $result = eval $code;
+    # croak "Template error: $@" if $@;
+
+    # ★ここを追加：今どのファイルが動いていて、evalしようとしているコードが何なのかを強制出力する
+    warn "=== DEBUG INFO ===";
+    warn "FILE: " . __FILE__;
+    warn "CODE:\n$code";
+    warn "==================";
+
     my $result = eval $code;
-    croak "Template error: $@" if $@;
+    
+    my $err = $@;
+    warn "DIAG EVAL ERROR: [$err]";
+
+    croak "Template error: $err" if $err;
 
     $result;
   };
