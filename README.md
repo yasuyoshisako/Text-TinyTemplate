@@ -71,7 +71,7 @@ __DATA__
     <h1><%= $title %></h1>
     <ul>
     <% foreach my $person (@$people) { %>
-      <li><%= $person->{name} \%> : <\%=$person->{age} %> years old</li>
+      <li><%= $person->{name} %> : <%= $person->{age} %> years old</li>
     <% } %>
     </ul>
   </body>

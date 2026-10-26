@@ -48,7 +48,7 @@ sub render {
       $2 ? $1 . q('; $_0 .= ) . $3 . q(; $_0 .= ') . $4
          : q('; ) . $3 . q( $_0 .= ') . $4 /ge;
 
-    my $code = "#line 1 \"template\"\n$args\n" . q(my $_0 = ') . $template . q('; $_0;);
+    my $code = "#line 1 \"template\"\nuse strict;\nuse warnings;\n$args\n" . q(my $_0 = ') . $template . q('; $_0;);
     my $result = eval $code;
     croak "Template error: $@" if $@;
 
