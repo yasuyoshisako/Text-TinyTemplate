@@ -19,12 +19,18 @@ sub escape_html {
 }
 
 sub make_accessors {
-
+  
   my $package = caller;
 
   {
     no strict 'refs';
-    *{"${package}::$_"} = sub { $_[0]->{$_} = $_[1] if defined $_[1]; $_[0]->{$_}; } for @_;
+    for my $field (@_) {
+      *{"${package}::${field}"} = sub {
+        my $self = shift;
+        $self->{$field} = shift if @_;
+        $self->{$field};
+      };
+    }
   }
 }
 
