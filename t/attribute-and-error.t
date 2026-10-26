@@ -15,10 +15,9 @@ $tt->tag_end('}}');
 is($tt->tag_end, '}}', 'tag_end getter/setter');
 
 # 不正なPerlコードが含まれている場合にcroakするか
+$tt->tag_start('<%');
+$tt->tag_end('%>');
 eval {
-    my $res = $tt->render('<%= $undefined_variable_strict_mode_check %>', {});
+    $tt->render('<%= $undefined_variable_strict_mode_check %>', {});
 };
-my $err = $@;
-diag("DIAG EVAL ERROR: [$err]"); # GitHub Actions のログに強制出力される
-
-like($err, qr/^Template error:/, 'croak on template evaluation error');
+like($@, qr/^Template error:/, 'croak on template evaluation error');
