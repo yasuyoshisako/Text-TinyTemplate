@@ -4,35 +4,28 @@ use 5.008;
 use strict;
 use warnings;
 
-use Carp qw( croak );
+our $VERSION = '0.02';
 
-our $VERSION = '0.01';
-
-my %escape_rules = ( '&' => 'amp', '>' => 'gt', '<' => 'lt', '"' => 'quot', "'" => '#39' );
+my %HTML = ( '&' => '&amp;', '<' => '&lt;', '>' => '&gt;', '"' => '&quot;', "'" => '&#39;' );
+my $escaped_keys = quotemeta join('', keys %HTML);
 
 sub escape_html {
 
   my $str = shift;
-  my $extra_rules = shift;
   return unless defined $str;
 
-  my %rules = %escape_rules;
-  if (defined $extra_rules) {
-    if (ref($extra_rules) eq 'HASH') {
-      while (my ($key, $value) = each %$extra_rules) {
-        $rules{$key} = $value;
-      }
-    }
-    else {
-      croak 'The second argument of escape_html must be a hash reference.';
-    }
-  }
-
-  my $escape_keys = '[' . join('', keys %rules) . ']';
-
-  $str =~ s/(&[a-zA-Z0-9]+;|&#\d+;|&#x[0-9a-fA-F]+;)|($escape_keys)/$1 ? $1 : '&' . $rules{$2} . ';'/ge;
+  $str =~ s/([$escaped_keys])/$HTML{$1}/ge;
   $str;
+}
 
+sub make_accessors {
+
+  my $package = caller;
+
+  {
+    no strict 'refs';
+    *{"${package}::$_"} = sub { $_[0]->{$_} = $_[1] if defined $_[1]; $_[0]->{$_}; }  if @_;
+  }
 }
 
 sub import {
@@ -44,7 +37,6 @@ sub import {
     no strict 'refs';
     *{"${package}::$_"} = \&{"${self}::$_"} for @_;
   }
-
 }
 
 1;
@@ -57,54 +49,57 @@ Text::TinyTemplate::Utils - Utility functions for Text::TinyTemplate.
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 SYNOPSIS
 
-  use Text::TinyTemplate::Utils qw( escape_html );
+    package Text::TinyTemplate;
+    use strict;
+    use warnings;
 
-  my $escaped = escape_html('<script>alert(1)</script>');
-  # &lt;script&gt;alert(1)&lt;/script&gt;
+    use Text::TinyTemplate::Utils qw( escape_html make_accessors );
 
-  # Add custom escape rules
-  my $escaped2 = escape_html('<>', { '<' => 'foo' });
-  # &foo;&gt;
+    # HTML escaping
+    my $safe_text = escape_html($raw_text);
+
+    # Generating getter/setter accessors
+    make_accessors( qw( tag_start tag_end expression_mark ) );
 
 =head1 DESCRIPTION
 
-This module provides utility functions used internally by L<Text::TinyTemplate>.
-Currently it contains only one function, C<escape_html>, which performs minimal HTML escaping.
-
-The implementation is intentionally small and dependency-free, following the same "Tiny" philosophy as L<Text::TinyTemplate>.
+C<Text::TinyTemplate::Utils> provides internal utility functions used by C<Text::TinyTemplate>. 
+These functions can be imported explicitly as needed.
 
 =head1 FUNCTIONS
 
-=head2 escape_html($string, \%extra_rules)
+The following functions can be exported on demand:
 
-  my $escaped = escape_html($string);
-  my $escaped = escape_html($string, { '<' => 'lt2' });
+=head2 escape_html($text)
 
-Escapes unsafe HTML characters in C<$string> and returns the escaped result.
-The following characters are escaped by default:
+Escapes special characters in the given C<$text> to prevent HTML injection (XSS).
 
-  &  <  >  "  '
+    my $safe = escape_html('<script>alert("XSS");</script>');
+    # Result: &lt;script&gt;alert(&quot;XSS&quot;);&lt;/script&gt;
 
-These are converted to:
+Characters handled:
+=over 4
+=item * C<&> becomes C<&amp;>
+=item * C<"> becomes C<&quot;>
+=item * C<'> becomes C<&#39;>
+=item * C<< < >> becomes C<&lt;>
+=item * C<< > >> becomes C<&gt;>
+=back
 
-  &amp;  &lt;  &gt;  &quot;  &#39;
+=head2 make_accessors(@attribute_names)
 
-If C<\%extra_rules> is provided, its keys and values are merged into the default escape rules.  Extra rules override the defaults.
+Dynamically generates getter/setter methods for the calling package (class).
 
-  escape_html('<', { '<' => 'foo' });  # &foo;
+    make_accessors('foo', 'bar');
 
-Existing HTML entities such as C<&amp;>, C<&#123;>, and C<&#x1f;> are preserved and not double-escaped.
+This creates C<foo()> and C<bar()> methods in the caller's namespace, allowing objects to get or set their attribute values:
 
-=head1 EXPORTS
-
-This module does not export anything by default.  
-Functions must be imported explicitly:
-
-  use Text::TinyTemplate::Utils qw( escape_html );
+    $obj->foo('new_value'); # setter
+    my $val = $obj->foo;    # getter
 
 =head1 SEE ALSO
 
