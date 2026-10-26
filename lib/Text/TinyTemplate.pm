@@ -50,11 +50,6 @@ sub render {
 
     my $code = "#line 1 \"template\"\nuse strict;\nuse warnings;\n$args\n" . q(my $_0 = ') . $template . q('; $_0;);
     my $result = eval $code;
-
-# ★ここを追加して、どのようなエラー（または空）が返っているか確認
-    warn "DEBUG eval error: [$@]" if $@;
-    warn "DEBUG code was:\n$code" if $@;
-
     croak "Template error: $@" if $@;
 
     $result;
