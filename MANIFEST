@@ -9,8 +9,8 @@ MYMETA.json
 MYMETA.yml
 README.md
 t/00-load.t
+t/attribute-and-error.t
 t/escape_html.t
 t/render-basic.t
-t/render-utf8.t
 t/render-quotes.t
-t/attribute-and-error.t
+t/render-utf8.t
