@@ -24,7 +24,7 @@ sub make_accessors {
 
   {
     no strict 'refs';
-    *{"${package}::$_"} = sub { $_[0]->{$_} = $_[1] if defined $_[1]; $_[0]->{$_}; }  if @_;
+    *{"${package}::$_"} = sub { $_[0]->{$_} = $_[1] if defined $_[1]; $_[0]->{$_}; } for @_;
   }
 }
 
